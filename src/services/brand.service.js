@@ -1,5 +1,6 @@
 'use strict'
 
+const { ConflictException } = require('../exceptions');
 const brandModel = require('../models/brand.model');
 
 /**
@@ -11,15 +12,17 @@ const isBrandExist = async (brandName) => {
     return brand;
 }
 
-const findAllBrandsService = async (page,limit) => {
+const findAllBrandsService = async (page, limit) => {
     let brands = await brandModel.find().lean();
     if (!page && !limit) {
-        return brands;
+        return {
+            data: brands
+        };
     }
 
     const total = brands.length;
     const startIndex = (page - 1) * limit;
-    const paginatedBrands = brands.slice(startIndex,startIndex + limit);
+    const paginatedBrands = brands.slice(startIndex, startIndex + limit);
     const totalPage = Math.ceil(total / limit);
 
 
@@ -35,16 +38,13 @@ const findAllBrandsService = async (page,limit) => {
 }
 
 const createBrandService = async (data) => {
-    try {
-        const isExist = await isBrandExist(data.brandName);
-        if (isExist) return null;
+    const isExist = await isBrandExist(data.brandName);
+    if (isExist) return ConflictException(`Brand ${data.brandName} is already exist!`);
 
-        let result = await brandModel.create(data);
-        return result;
-    } catch (error) {
-        console.log(error);
-        return null
-    }
+    let result = await brandModel.create(data);
+    return {
+        data: result
+    };
 }
 
 module.exports = {

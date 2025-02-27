@@ -4,6 +4,8 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
+const { errorResponse } = require('./middlewares/http.response');
+const errorHandler = require('./middlewares/errorHandler');
 const app = express();
 
 //config cors
@@ -19,6 +21,9 @@ app.use(express.urlencoded({ extended: true }));
 require('./dbs/init.mongodb');
 
 //routes
-app.use('/',require('./routes/index'));
+app.use('/', require('./routes/index'));
+
+//Middleware errors
+app.use(errorHandler);
 
 module.exports = app;
