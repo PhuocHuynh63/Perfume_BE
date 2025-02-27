@@ -1,15 +1,11 @@
 'use strict';
 
 const express = require('express');
-const { apiKey } = require('../auth/checkAuth');
+const auth = require('../middlewares/auth');
 const router = express.Router();
 
-//check apiKey
-router.use(apiKey);
-
-router.use('/api/v1/', require('./access/index'));
-// router.get('/', (req, res) => {
-//     return res.status(200).json({ message: 'Hello World' });
-// });
+router.all('*',auth)
+router.use('/api/v1/',require('./user'));
+router.use('/api/v1/',require('./brand'));
 
 module.exports = router;
