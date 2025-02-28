@@ -8,7 +8,7 @@ const crypto = require('crypto');
 const KeyTokenService = require("./keyToken.service");
 const { createTokenPair } = require("../auth/authUtils");
 const { getInfoData } = require("../utils");
-const { ConflictException, BadRequestException } = require("../exceptions");
+const { ConflictException, BadRequestException, NotFoundException } = require("../exceptions");
 
 /**
  * Service
@@ -52,8 +52,71 @@ const loginService = async (membername, password) => {
     };
 }
 
+const getAllMemberService = async (page, limit) => {
+    const totalMembers = await memberModel.countDocuments();
+    const totalPage = Math.ceil(totalMembers / limit);
+    let members = await memberModel
+        .find()
+        .skip(page * limit)
+        .select("-password")
+        .limit(limit).lean();
+
+    if (!page && !limit) {
+        return members;
+    }
+
+    return {
+        data: members,
+        pagination: {
+            total: totalMembers,
+            page: page,
+            limit: limit,
+            totalPage: totalPage
+        }
+    };
+}
+
+const updateMemberService = async (data) => {
+    const { membername, password } = data;
+    let member = await memberModel({ membername, password });
+    return await member.save();
+}
+
+const changePasswordService = async (id, data) => {
+    const { password, newPassword, confirmPassword } = data;
+    if (!password || !newPassword || !confirmPassword) {
+        throw new BadRequestException("Missing required fields");
+    }
+
+    let member = await memberModel.findOne({ _id: id });
+    if (!member) {
+        throw new NotFoundException("Member not found");
+    }
+
+    //Check password
+    let checkPassword = await bcrypt.compare(password, member.password);
+    if (!checkPassword) {
+        throw new BadRequestException("Password is incorrect");
+    };
+
+    //Change password from request
+    const newPasswordData = newPassword;
+
+    if (newPasswordData !== confirmPassword) {
+        throw new BadRequestException("Password and Confirm Password are not match");
+    }
+
+    if (newPasswordData === password) {
+        throw new BadRequestException("New password must be different from the old password");
+    }
+    member.password = await bcrypt.hash(newPasswordData, 10);
+    return await member.save();
+}
 
 module.exports = {
     registerService,
-    loginService
+    loginService,
+    updateMemberService,
+    changePasswordService,
+    getAllMemberService,
 };

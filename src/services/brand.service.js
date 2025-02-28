@@ -12,17 +12,15 @@ const isBrandExist = async (brandName) => {
     return brand;
 }
 
-const findAllBrandsService = async (page, limit) => {
+const findAllBrandsService = async (page,limit) => {
     let brands = await brandModel.find().lean();
     if (!page && !limit) {
-        return {
-            data: brands
-        };
+        return brands
     }
 
     const total = brands.length;
     const startIndex = (page - 1) * limit;
-    const paginatedBrands = brands.slice(startIndex, startIndex + limit);
+    const paginatedBrands = brands.slice(startIndex,startIndex + limit);
     const totalPage = Math.ceil(total / limit);
 
 

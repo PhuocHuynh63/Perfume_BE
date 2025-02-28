@@ -1,6 +1,6 @@
 module.exports = {
     SUCCESS: {
-        OK: { code: 200, message: "Thành công!" },
+        OK: { code: 200, message: "Success!" },
         CREATED: { code: 201, message: "Tạo dữ liệu thành công!" }
     },
     ERROR: {
