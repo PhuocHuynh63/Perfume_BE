@@ -4,9 +4,14 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const helmet = require('helmet');
-const { errorResponse } = require('./middlewares/http.response');
+const path = require('path');
 const errorHandler = require('./middlewares/errorHandler');
 const app = express();
+
+//view engine
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+app.use(express.static(path.join(__dirname, 'public')));    
 
 //config cors
 app.use(cors());

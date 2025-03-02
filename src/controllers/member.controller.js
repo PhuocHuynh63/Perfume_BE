@@ -8,7 +8,11 @@ const { successResponse } = require("../middlewares/http.response");
 const register = async (req, res, next) => {
     try {
         const data = await registerService(req.body);
-        return successResponse(res, data, "Tạo tài khoản thành công!", 201);
+        if (req.headers.accept === 'application/json') {
+            return successResponse(res, data, "Create account successful!", 201);
+        }
+
+        return res.redirect(302, '/views/login');
     } catch (error) {
         next(error);
     }
@@ -28,9 +32,19 @@ const getAllMember = async (req, res, next) => {
     try {
         const { page, limit } = req.query;
         const data = await getAllMemberService(page, limit);
-        return successResponse(res, data, "Get all member successful!!", 200);
+        if (req.headers.accept === 'application/json') {
+            return successResponse(res, data, "Get all member successful!!", 200);
+        }
+        return res.redirect('/views/login', { data });
     } catch (error) {
-        next(error);
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return res.status(error.status || 400).json({
+                success: false,
+                message: error.message
+            });
+        }
+
+        return res.render('register', { error: error.message, success: null });
     }
 }
 

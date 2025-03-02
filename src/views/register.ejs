@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <link rel="stylesheet" href="/styles/register.css">
+</head>
+
+<body class="container">
+    <div class="form-container">
+        <div class="text-center">
+            <h1 class="title">Create an Account</h1>
+            <p class="subtitle">Please fill in the details to register</p>
+        </div>
+
+        <% if (error) { %>
+            <div class="alert error">
+                <span>
+                    <%= error %>
+                </span>
+            </div>
+            <% } %>
+
+                <% if (success) { %>
+                    <div class="alert success">
+                        <span>
+                            <%= success %>
+                        </span>
+                    </div>
+                    <% } %>
+
+                        <form action="/api/v1/member/register" method="POST" class="form">
+                            <div>
+                                <label for="membername" class="label">MemberName</label>
+                                <input type="text" id="membername" name="membername" required class="input">
+                            </div>
+
+                            <div>
+                                <label for="password" class="label">Password</label>
+                                <input type="password" id="password" name="password" required class="input">
+                            </div>
+
+                            <div>
+                                <button type="submit" class="button">Register</button>
+                            </div>
+                        </form>
+
+                        <div class="text-center">
+                            <p class="login-link">
+                                Already have an account?
+                                <a href="/login" class="link">Log in</a>
+                            </p>
+                        </div>
+    </div>
+</body>
+
+</html>

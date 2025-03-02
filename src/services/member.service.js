@@ -37,6 +37,7 @@ const loginService = async (membername, password) => {
     const payload = {
         _id: member._id,
         membername: member.membername,
+        isAdmin: member.isAdmin
     }
     const accessToken = jwt.sign(
         payload,
@@ -46,7 +47,7 @@ const loginService = async (membername, password) => {
         });
     return {
         user: {
-            member: membername
+            member: membername,
         },
         accessToken
     };
