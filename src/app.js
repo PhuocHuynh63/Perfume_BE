@@ -6,15 +6,16 @@ const cors = require('cors');
 const helmet = require('helmet');
 const path = require('path');
 const errorHandler = require('./middlewares/errorHandler');
+const { corsOptions } = require('./configs/config.cors');
 const app = express();
 
 //view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')));    
+app.use(express.static(path.join(__dirname, 'public')));
 
 //config cors
-app.use(cors());
+app.use(cors(corsOptions));
 
 //middlewares
 app.use(morgan('dev'));

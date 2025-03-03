@@ -28,7 +28,8 @@ const loginService = async (membername, password) => {
     let member = await memberModel.findOne({ membername }).lean();
     if (!member) {
         throw new BadRequestException("Email/Password is incorrect");
-    }
+    } console.log("JWT_SECRET:", process.env.JWT_SECRET);
+
 
     let checkPassword = await bcrypt.compare(password, member.password);
     if (!checkPassword) {

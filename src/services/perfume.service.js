@@ -33,7 +33,7 @@ const findAllPerfumesService = async (page, limit) => {
     }
 
     return {
-        data: paginatedPerfumes,
+        data: result,
         pagination: {
             total: total,
             page: page,
