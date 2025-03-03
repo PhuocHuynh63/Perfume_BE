@@ -58,26 +58,25 @@ const findPerfumeService = async (data) => {
     return result;
 }
 
-const findPerfumeByNameService = async (name, current = 1, pageSize = 10) => {
+const findPerfumeByNameService = async (name, brandId = "", current = 1, pageSize = 10) => {
     const regex = new RegExp(name, 'i');
 
-    if (!name) {
-        return null;
+    let filter = { perfumeName: regex };
+
+    if (brandId.trim()) {
+        filter["brand"] = brandId;
     }
 
     let skip = (current - 1) * pageSize;
 
     let result = await perfumeModel
-        .find({ perfumeName: regex })
-        .select('_id perfumeName uri price')
+        .find(filter)
+        .populate('brand', 'brandName')
         .skip(skip)
         .limit(pageSize)
         .lean();
-    if (!result) {
-        throw new NotFoundException(`Perfume not found`);
-    }
 
-    const totalItem = result.length;
+    const totalItem = await perfumeModel.countDocuments(filter);
     const totalPage = Math.ceil(totalItem / pageSize);
 
     return {
