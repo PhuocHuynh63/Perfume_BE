@@ -58,21 +58,37 @@ const findPerfumeService = async (data) => {
     return result;
 }
 
-const findPerfumeByNameService = async (data) => {
-    const regex = new RegExp(data.name, 'i');
+const findPerfumeByNameService = async (name, current = 1, pageSize = 10) => {
+    const regex = new RegExp(name, 'i');
 
-    if (!data) {
+    if (!name) {
         return null;
     }
+
+    let skip = (current - 1) * pageSize;
 
     let result = await perfumeModel
         .find({ perfumeName: regex })
         .select('_id perfumeName uri price')
+        .skip(skip)
+        .limit(pageSize)
         .lean();
     if (!result) {
         throw new NotFoundException(`Perfume not found`);
     }
-    return result;
+
+    const totalItem = result.length;
+    const totalPage = Math.ceil(totalItem / pageSize);
+
+    return {
+        data: result,
+        pagination: {
+            current: current,
+            pageSize: pageSize,
+            totalPage: totalPage,
+            totalItem: totalItem
+        }
+    };
 }
 
 // const findPerfumeByBrandNameService = async (data) => {

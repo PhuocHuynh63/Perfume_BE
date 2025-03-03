@@ -45,8 +45,8 @@ const findPerfume = async (req, res, next) => {
 
 const findPerfumeByName = async (req, res, next) => {
     try {
-        const data = req.params;
-        const result = await findPerfumeByNameService(data);
+        const { name, current, pageSize } = req.query;
+        const result = await findPerfumeByNameService(name, current, pageSize);
         return successResponse(res, result, "Find perfume by name successful!!", 200);
     } catch (error) {
         next(error);
