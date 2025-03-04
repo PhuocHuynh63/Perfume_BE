@@ -7,8 +7,20 @@ const COLLECTION_NAME = 'Members';
 
 // Declare the Schema of the Mongo model
 const memberSchema = new mongoose.Schema({
-    membername: { type: String, require: true },
+    email: { type: String, require: true, unique: true, email: true },
     password: { type: String, require: true },
+    name: { type: String, require: true },
+    YOB: {
+        type: Number,
+        require: true,
+        validate: {
+            validator: function (v) {
+                return v.toString().length === 4;
+            },
+            message: props => `${props.value} is not a valid year of birth!`
+        }
+    },
+    gender: { type: String, require: true, enum: ['Male', 'Female'] },
     isAdmin: { type: Boolean, default: false }
 }, {
     timestamps: true,

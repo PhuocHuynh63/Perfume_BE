@@ -14,21 +14,25 @@ const { ConflictException, BadRequestException, NotFoundException } = require(".
  * Service
  */
 
-const registerService = async ({ membername, password }) => {
-    const existingUser = await memberModel.findOne({ membername });
-    if (existingUser) throw new ConflictException(`Membername ${membername} is already taken!`);
+const registerService = async (data) => {
+    const existingUser = await memberModel.findOne({ email: data.email });
+    if (existingUser) throw new ConflictException(`Email ${data.email} is already taken!`);
 
-    return await memberModel.create({
-        membername,
-        password: await bcrypt.hash(password, 10),
+    const member = await memberModel.create({
+        ...data,
+        password: await bcrypt.hash(data.password, 10),
     });
+
+    return {
+        data: member
+    }
 };
 
-const loginService = async (membername, password) => {
-    let member = await memberModel.findOne({ membername }).lean();
+const loginService = async (email, password) => {
+    let member = await memberModel.findOne({ email }).lean();
     if (!member) {
         throw new BadRequestException("Email/Password is incorrect");
-    } console.log("JWT_SECRET:", process.env.JWT_SECRET);
+    }
 
 
     let checkPassword = await bcrypt.compare(password, member.password);
@@ -37,7 +41,7 @@ const loginService = async (membername, password) => {
     };
     const payload = {
         _id: member._id,
-        membername: member.membername,
+        email: member.email,
         isAdmin: member.isAdmin
     }
     const accessToken = jwt.sign(
@@ -48,7 +52,7 @@ const loginService = async (membername, password) => {
         });
     return {
         user: {
-            member: membername,
+            name: member.name,
         },
         accessToken
     };
@@ -78,9 +82,12 @@ const getAllMemberService = async (page, limit) => {
     };
 }
 
-const updateMemberService = async (data) => {
-    const { membername, password } = data;
-    let member = await memberModel({ membername, password });
+const updateMemberService = async (_id, data) => {
+    const { name, YOB, gender } = data;
+    let member = await memberModel.findByIdAndUpdate(_id, { name, YOB, gender }, { new: true });
+    if (!member) {
+        throw new NotFoundException("Member not found");
+    }
     return await member.save();
 }
 

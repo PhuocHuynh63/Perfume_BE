@@ -9,4 +9,8 @@ router.get('/login', (req, res) => {
     res.render('login', { error: null, success: null });
 })
 
+router.get('/home', (req, res) => {
+    res.render('home', { data: null });
+})
+
 module.exports = router;

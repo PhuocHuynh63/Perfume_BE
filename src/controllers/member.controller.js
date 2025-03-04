@@ -8,21 +8,33 @@ const { successResponse } = require("../middlewares/http.response");
 const register = async (req, res, next) => {
     try {
         const data = await registerService(req.body);
-        if (req.headers.accept === 'application/json') {
+
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
             return successResponse(res, data, "Create account successful!", 201);
         }
 
-        return res.redirect(302, '/views/login');
+        return res.render("register-success", { message: "Tạo tài khoản thành công!" });
     } catch (error) {
-        next(error);
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return res.status(error.status || 400).json({
+                success: false,
+                message: error.message
+            });
+        }
+
+        return res.render("register", { error: error.message, success: null });
     }
 };
 
 const login = async (req, res, next) => {
     try {
-        const { membername, password } = req.body;
-        const data = await loginService(membername, password);
-        return successResponse(res, data, "Đăng nhập thành công!", 200);
+        const { email, password } = req.body;
+        const data = await loginService(email, password);
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return successResponse(res, data, "Login successful!", 200);
+        }
+
+        return res.render("/views/home", { data });
     } catch (error) {
         next(error);
     }
@@ -51,7 +63,8 @@ const getAllMember = async (req, res, next) => {
 const updateMember = async (req, res, next) => {
     try {
         const data = req.body;
-        const result = await updateMemberService(data);
+        const { _id } = req.params;
+        const result = await updateMemberService(_id, data);
         return successResponse(res, result, "Update user successful!!", 200);
     } catch (error) {
         next(error);
