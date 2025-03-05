@@ -7,6 +7,7 @@ const helmet = require('helmet');
 const path = require('path');
 const errorHandler = require('./middlewares/errorHandler');
 const { corsOptions } = require('./configs/config.cors');
+const cookieParser = require('cookie-parser');
 const app = express();
 
 //view engine
@@ -22,6 +23,7 @@ app.use(morgan('dev'));
 app.use(helmet());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 
 //db
 require('./dbs/init.mongodb');

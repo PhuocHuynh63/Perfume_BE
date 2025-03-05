@@ -6,8 +6,8 @@ const router = express.Router();
 
 router.all('*', auth)
 router.use('/views/', require('./views'));
-router.use('/api/v1/', require('./member'));
-router.use('/api/v1/', require('./brand'));
-router.use('/api/v1/', require('./perfume'));
+router.use('/api/v1/', require('./apis/member'));
+router.use('/api/v1/', require('./apis/brand'));
+router.use('/api/v1/', require('./apis/perfume'));
 
 module.exports = router;

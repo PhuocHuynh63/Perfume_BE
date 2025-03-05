@@ -1,5 +1,6 @@
 const { registerService, loginService, changePasswordService, getAllMemberService } = require("../services/member.service");
 const { successResponse } = require("../middlewares/http.response");
+const { findAllPerfumesService } = require("../services/perfume.service");
 
 /**
  * Controller
@@ -34,9 +35,16 @@ const login = async (req, res, next) => {
             return successResponse(res, data, "Login successful!", 200);
         }
 
-        return res.render("/views/home", { data });
+        res.cookie("accessToken", data.accessToken, {
+            maxAge: 7 * 24 * 60 * 60 * 1000,
+        })
+
+        return res.redirect("/views/home");
     } catch (error) {
-        next(error);
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            next(error);
+        }
+        return res.render("login", { error: error.message, success: null });
     }
 };
 

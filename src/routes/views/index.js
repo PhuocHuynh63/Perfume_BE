@@ -1,16 +1,11 @@
 const express = require('express');
+const { renderRegister, renderLogin, renderHome } = require('../../controllers/views.controller');
 const router = express.Router();
 
-router.get(`/register`, (req, res) => {
-    res.render('register', { error: null, success: null });
-});
+router.get(`/register`, renderRegister);
 
-router.get('/login', (req, res) => {
-    res.render('login', { error: null, success: null });
-})
+router.get('/login', renderLogin);
 
-router.get('/home', (req, res) => {
-    res.render('home', { data: null });
-})
+router.get('/home', renderHome);
 
 module.exports = router;

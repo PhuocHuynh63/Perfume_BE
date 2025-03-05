@@ -17,7 +17,12 @@ const findAllPerfumes = async (req, res, next) => {
     const { page, limit } = req.query;
     try {
         const data = await findAllPerfumesService(page, limit);
-        return successResponse(res, data, "Get all perfumes successful!!", 200);
+
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return successResponse(res, data, "Get all perfumes successful!!", 200);
+        }
+
+        return res.render("home", { data });
     } catch (error) {
         next(error);
     }

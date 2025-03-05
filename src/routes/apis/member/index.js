@@ -7,8 +7,8 @@ const {
     updateMember,
     changePassword,
     getAllMember
-} = require('../../controllers/member.controller');
-const { authAdmin } = require('../../middlewares/checkAdmin');
+} = require('../../../controllers/member.controller');
+const { authAdmin } = require('../../../middlewares/checkAdmin');
 const router = express.Router();
 
 router.post('/member/register', register);
