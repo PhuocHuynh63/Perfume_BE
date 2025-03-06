@@ -14,15 +14,26 @@
         <div class="container mx-auto px-4 py-6">
             <div class="flex justify-between items-center">
                 <h1 class="text-3xl font-bold text-gray-800">Luxury Perfumes</h1>
-                <div class="flex space-x-4">
+                <div class="flex flex-row space-x-4 items-center">
                     <div class="relative">
                         <form action="/views/home">
                             <input type="text" name="name" placeholder="Search perfumes..."
                                 class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300"
                                 value="<%= search || '' %>">
+                            <input type="hidden" name="brandId" value="<%= selectedBrand || '' %>">
                             <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                         </form>
                     </div>
+
+                    <% if (!token) {%>
+                        <div>
+                            <a href="/views/login">Login</a>
+                        </div>
+                        <% } else { %>
+                            <div>
+                                <a href="/view/user-detail">Avatar :))</a>
+                            </div>
+                            <% } %>
                 </div>
             </div>
         </div>
@@ -32,11 +43,15 @@
         <!-- Filter Section -->
         <div class="mb-8">
             <h2 class="text-xl font-semibold mb-4 text-gray-700">Filter By:</h2>
-            <form action="/views/home" class="flex flex-wrap gap-4">
-                <select name="" id="">
-                    <option value="">All</option>
+            <form id="brandFilterForm" action="/views/home" class="flex flex-wrap gap-4">
+                <input type="hidden" name="name" value="<%= search || '' %>">
+
+                <select name="brandId" class="border px-4 py-2 rounded-lg"
+                    onchange="document.getElementById('brandFilterForm').submit()">
+                    <option value="" <%=!selectedBrand ? "selected" : "" %>>All</option>
                     <% brands.forEach(brand=> { %>
-                        <option value="<%= brand._id %>">
+                        <option value="<%= brand._id %>" <%=brand._id.toString()===selectedBrand?.toString()
+                            ? "selected" : "" %>>
                             <%= brand.brandName %>
                         </option>
                         <% }); %>

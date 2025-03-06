@@ -16,8 +16,11 @@ const renderHome = async (req, res) => {
     }
 
     //#region get all or search perfumes by name
-    const { name } = req.query;
-    const resultPerfumes = await findPerfumeByNameService(name);
+    const { name, brandId } = req.query;
+    console.log('name', name);
+    console.log('brandId', brandId);
+
+    const resultPerfumes = await findPerfumeByNameService(name, brandId);
     const perfumes = resultPerfumes.data;
     //#endregion
 
@@ -27,7 +30,13 @@ const renderHome = async (req, res) => {
     //#endregion
 
 
-    res.render('home', { perfumes, brands, token, search: name || "" });
+    res.render('home', {
+        perfumes,
+        brands,
+        token,
+        search: name || "",
+        selectedBrand: brandId || "",
+    });
 }
 
 const renderProductDetail = async (req, res) => {
@@ -42,6 +51,10 @@ const renderProductDetail = async (req, res) => {
     console.log(perfume);
 
     res.render(`product-detail`, { perfume: perfume, token });
+}
+
+const renderUserDetail = async (req, res) => {
+
 }
 
 module.exports = {
