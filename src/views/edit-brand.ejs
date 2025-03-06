@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Brand</title>
+</head>
+
+<body>
+    <h1>Edit Brand</h1>
+    <form action="/api/v1/brand/update/<%= brand._id %>" method="POST">
+        <label>Brand Name:</label>
+        <input type="text" name="brandName" value="<%= brand.brandName %>" required>
+        <button type="submit">Save Changes</button>
+    </form>
+</body>
+
+</html>

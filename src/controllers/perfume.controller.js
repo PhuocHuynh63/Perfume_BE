@@ -5,7 +5,9 @@ const {
     createPerfumeService,
     findPerfumeService,
     findPerfumeByNameService,
-    findPerfumeByBrandNameService
+    findPerfumeByBrandNameService,
+    deletePerfumeService,
+    updatePerfumeService
 } = require("../services/perfume.service");
 
 /**
@@ -15,7 +17,9 @@ const {
 const createPerfume = async (req, res, next) => {
     try {
         const data = req.body;
-        const result = await createPerfumeService(data);
+        const token = req.cookies.accessToken;
+
+        const result = await createPerfumeService(token, data);
         return successResponse(res, result, "Create perfume successful!!", 201);
     } catch (error) {
         next(error);
@@ -55,9 +59,44 @@ const findPerfumeByBrandName = async (req, res, next) => {
     }
 }
 
+const updatePerfume = async (req, res, next) => {
+    try {
+        const data = req.body;
+        const token = req.cookies.accessToken;
+        const { id } = req.params;
+        const result = await updatePerfumeService(id, token, data);
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return successResponse(res, result, "Update perfume successful!!", 200);
+        }
+        const perfumes = await findPerfumeByNameService(data.name, data.brandId, data.limit, data.page);
+        return res.render(`manage`, { error: null, success: "Update perfume successful!!", perfumes: perfumes.data });
+    } catch (error) {
+        next(error);
+    }
+}
+
+const deletePerfume = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { name, brandId, limit, page } = req.query;
+        const token = req.cookies.accessToken;
+        const result = await deletePerfumeService(token, id);
+        if (req.headers.accept && req.headers.accept.includes('application/json')) {
+            return successResponse(res, result, "Delete perfume successful!!", 200);
+        }
+        const perfumes = await findPerfumeByNameService(name, brandId, limit, page);
+        return res.render(`manage`, { error: null, success: "Delete perfume successful!!", perfumes: perfumes.data });
+    } catch (error) {
+        next(error);
+        return res.render(`manage`, { error: error.message, success: null });
+    }
+}
+
 module.exports = {
     createPerfume,
     findPerfume,
     findPerfumeByName,
-    findPerfumeByBrandName
+    findPerfumeByBrandName,
+    updatePerfume,
+    deletePerfume
 }

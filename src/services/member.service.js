@@ -4,10 +4,6 @@ const memberModel = require("../models/member.model");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-const crypto = require('crypto');
-const KeyTokenService = require("./keyToken.service");
-const { createTokenPair } = require("../auth/authUtils");
-const { getInfoData } = require("../utils");
 const { ConflictException, BadRequestException, NotFoundException } = require("../exceptions");
 
 /**
@@ -82,6 +78,14 @@ const getAllMemberService = async (page, limit) => {
     };
 }
 
+const getMemberByIdService = async (_id) => {
+    let member = await memberModel.findById(_id).select("-password").lean();
+    if (!member) {
+        throw new NotFoundException("Member not found");
+    }
+    return member;
+}
+
 const updateMemberService = async (_id, data) => {
     const { name, YOB, gender } = data;
     let member = await memberModel.findByIdAndUpdate(_id, { name, YOB, gender }, { new: true });
@@ -128,4 +132,5 @@ module.exports = {
     updateMemberService,
     changePasswordService,
     getAllMemberService,
+    getMemberByIdService
 };

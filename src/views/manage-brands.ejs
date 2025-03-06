@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage</title>
+</head>
+
+<body>
+    <a href="">Create Brands</a>
+    <br />
+    <br />
+
+    <% if (success) { %>
+        <div class="alert success">
+            <span>
+                <%= success %>
+            </span>
+        </div>
+        <% } %>
+
+            <% if (error) { %>
+                <div class="alert error">
+                    <span>
+                        <%= error %>
+                    </span>
+                </div>
+                <% } %>
+                    <br />
+                    <br />
+                    <div class="table-responsive">
+                        <table class="table table-primary" style="border: 1px solid black; border-collapse: collapse;">
+                            <thead>
+                                <tr style="border: 1px solid black;">
+                                    <th scope=" col">Id</th>
+                                    <th scope="col">Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% brands.forEach(brand=> { %>
+                                    <tr class="">
+                                        <td>
+                                            <%= brand._id %>
+                                        </td>
+                                        <td>
+                                            <%= brand.brandName %>
+                                        </td>
+                                        <td>
+                                            <a href="/views/admin/edit-brand/<%= brand._id %>">Edit</a>
+                                            <form action="/api/v1/brand/delete/<%= brand._id %>" method="POST">
+                                                <button type="submit">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+
+</body>
+
+</html>

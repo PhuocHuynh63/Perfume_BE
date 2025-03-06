@@ -1,13 +1,18 @@
 const { BadRequestException, NotFoundException } = require('../exceptions');
 const perfumeModel = require('../models/perfume.model');
+const jwt = require('jsonwebtoken');
 
 
 /**
  * Service
  */
 
-const createPerfumeService = async (data) => {
+const createPerfumeService = async (token, data) => {
     try {
+        const decoded = jwt.decode(token);
+        if (decoded.isAdmin === false) {
+            throw new BadRequestException(`You are not allowed to create perfume`);
+        }
         let result = await perfumeModel.create(data);
         return result;
     } catch (error) {
@@ -17,8 +22,6 @@ const createPerfumeService = async (data) => {
 }
 
 const findPerfumeService = async (data) => {
-    console.log(data);
-
     if (!data) {
         throw new BadRequestException(`${data} is required`);
     }
@@ -103,9 +106,39 @@ const findPerfumeByBrandNameService = async (data) => {
     return result;
 }
 
+const updatePerfumeService = async (id, token, data) => {
+    try {
+        const decoded = jwt.decode(token);
+        if (decoded.isAdmin === false) {
+            throw new BadRequestException(`You are not allowed to update perfume`);
+        }
+        let result = await perfumeModel.updateOne({ _id: id }, data);
+        return result;
+    } catch (error) {
+        console.log(error);
+        return null
+    }
+}
+
+const deletePerfumeService = async (token, data) => {
+    try {
+        const decoded = jwt.decode(token);
+        if (decoded.isAdmin === false) {
+            throw new BadRequestException(`You are not allowed to delete perfume`);
+        }
+        let result = await perfumeModel.deleteOne({ _id: data });
+        return result;
+    } catch (error) {
+        console.log(error);
+        return null
+    }
+}
+
 module.exports = {
     createPerfumeService,
     findPerfumeService,
     findPerfumeByNameService,
-    findPerfumeByBrandNameService
+    findPerfumeByBrandNameService,
+    updatePerfumeService,
+    deletePerfumeService
 }

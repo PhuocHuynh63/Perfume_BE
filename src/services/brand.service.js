@@ -35,6 +35,11 @@ const findAllBrandsService = async (current = 1, pageSize = 10) => {
     }
 }
 
+const findOneBrandService = async (id) => {
+    let brand = await brandModel.findById(id).lean();
+    return brand;
+}
+
 const createBrandService = async (data) => {
     const isExist = await isBrandExist(data.brandName);
     if (isExist) return ConflictException(`Brand ${data.brandName} is already exist!`);
@@ -45,7 +50,25 @@ const createBrandService = async (data) => {
     };
 }
 
+const updateBrandService = async (id, brandName) => {
+    let result = await brandModel.updateOne
+        ({ _id: id }, { brandName: brandName });
+    return {
+        data: result
+    };
+}
+
+const deleteBrandService = async (id) => {
+    let result = await brandModel.deleteOne({ _id: id });
+    return {
+        data: result
+    };
+}
+
 module.exports = {
     createBrandService,
-    findAllBrandsService
+    findOneBrandService,
+    findAllBrandsService,
+    updateBrandService,
+    deleteBrandService,
 }
