@@ -3,7 +3,6 @@
 const express = require('express');
 const {
     createPerfume,
-    findAllPerfumes,
     findPerfume,
     findPerfumeByName,
     findPerfumeByBrandName
@@ -11,7 +10,6 @@ const {
 const router = express.Router();
 
 router.post(`/perfume/create`, createPerfume);
-router.get(`/perfume`, findAllPerfumes);
 router.get(`/perfume/:id`, findPerfume);
 router.get(`/perfume/search`, findPerfumeByName);
 router.get(`/perfume/brand/:id`, findPerfumeByBrandName);

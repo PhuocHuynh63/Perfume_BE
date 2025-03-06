@@ -12,25 +12,25 @@ const isBrandExist = async (brandName) => {
     return brand;
 }
 
-const findAllBrandsService = async (page,limit) => {
+const findAllBrandsService = async (current = 1, pageSize = 10) => {
     let brands = await brandModel.find().lean();
-    if (!page && !limit) {
+    if (!current && !pageSize) {
         return brands
     }
 
     const total = brands.length;
-    const startIndex = (page - 1) * limit;
-    const paginatedBrands = brands.slice(startIndex,startIndex + limit);
-    const totalPage = Math.ceil(total / limit);
-
+    const startIndex = (current - 1) * pageSize;
+    const paginatedBrands = brands.slice(startIndex, startIndex + pageSize);
+    const totalPage = Math.ceil(total / pageSize);
+    const totalItem = await brandModel.countDocuments().lean();
 
     return {
         data: paginatedBrands,
         pagination: {
-            total: total,
-            page: page,
-            limit: limit,
-            totalPage: totalPage
+            current: current,
+            pageSize: pageSize,
+            totalPage: totalPage,
+            totalItem: totalItem
         }
     }
 }

@@ -16,9 +16,12 @@
                 <h1 class="text-3xl font-bold text-gray-800">Luxury Perfumes</h1>
                 <div class="flex space-x-4">
                     <div class="relative">
-                        <input type="text" placeholder="Search perfumes..."
-                            class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300">
-                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        <form action="/views/home">
+                            <input type="text" name="name" placeholder="Search perfumes..."
+                                class="pl-10 pr-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-300"
+                                value="<%= search || '' %>">
+                            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -29,28 +32,27 @@
         <!-- Filter Section -->
         <div class="mb-8">
             <h2 class="text-xl font-semibold mb-4 text-gray-700">Filter By:</h2>
-            <div class="flex flex-wrap gap-4">
-                <button
-                    class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">All</button>
-                <button
-                    class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition">Female</button>
-                <button
-                    class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition">Male</button>
-                <button
-                    class="px-4 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-100 transition">Unisex</button>
-            </div>
+            <form action="/views/home" class="flex flex-wrap gap-4">
+                <select name="" id="">
+                    <option value="">All</option>
+                    <% brands.forEach(brand=> { %>
+                        <option value="<%= brand._id %>">
+                            <%= brand.brandName %>
+                        </option>
+                        <% }); %>
+                </select>
         </div>
+    </div>
 
-        <!-- Perfumes Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            <% perfumes.forEach(perfume=> { %>
-                <div
-                    class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
-                    <div class="relative h-64 overflow-hidden">
-                        <img src="<%= perfume.uri %>" alt="<%= perfume.perfumeName %>"
-                            class="w-full h-full object-cover">
-                        <div class="absolute top-0 right-0 m-2">
-                            <span class="px-3 py-1 text-xs font-semibold rounded-full 
+    <!-- Perfumes Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <% perfumes.forEach(perfume=> { %>
+            <a href="../views/product-detail/<%= perfume._id %>"
+                class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                <div class="relative h-64 overflow-hidden">
+                    <img src="<%= perfume.uri %>" alt="<%= perfume.perfumeName %>" class="w-full h-full object-cover">
+                    <div class="absolute top-0 right-0 m-2">
+                        <span class="px-3 py-1 text-xs font-semibold rounded-full 
                 <% if(perfume.targetAudience === 'female') { %>
                   bg-pink-100 text-pink-800
                 <% } else if(perfume.targetAudience === 'male') { %>
@@ -59,31 +61,30 @@
                   bg-purple-100 text-purple-800
                 <% } %>
               ">
-                                <%= perfume.targetAudience.charAt(0).toUpperCase() + perfume.targetAudience.slice(1) %>
-                            </span>
-                        </div>
-                    </div>
-                    <div class="p-5">
-                        <div class="text-sm text-gray-500 mb-1">
-                            <%= perfume.brand.brandName %>
-                        </div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">
-                            <%= perfume.perfumeName %>
-                        </h3>
-                        <div class="flex justify-between items-center mt-4">
-                            <div class="flex items-center">
-                                <i class="fas fa-star text-yellow-400 mr-1"></i>
-                                <span class="text-gray-700">4.8</span>
-                            </div>
-                            <button
-                                class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
-                                View Details
-                            </button>
-                        </div>
+                            <%= perfume.targetAudience.charAt(0).toUpperCase() + perfume.targetAudience.slice(1) %>
+                        </span>
                     </div>
                 </div>
-                <% }); %>
-        </div>
+                <div class="p-5">
+                    <div class="text-sm text-gray-500 mb-1">
+                        <%= perfume.brand.brandName %>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">
+                        <%= perfume.perfumeName %>
+                    </h3>
+                    <div class="flex justify-between items-center mt-4">
+                        <div class="flex items-center">
+                            <i class="fas fa-star text-yellow-400 mr-1"></i>
+                            <span class="text-gray-700">4.8</span>
+                        </div>
+                        <button class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition">
+                            View Details
+                        </button>
+                    </div>
+                </div>
+            </a>
+            <% }); %>
+    </div>
     </div>
 
     <footer class="bg-gray-800 text-white py-8 mt-12">

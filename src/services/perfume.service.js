@@ -16,40 +16,15 @@ const createPerfumeService = async (data) => {
     }
 }
 
-const findAllPerfumesService = async (page, limit) => {
-    const total = await perfumeModel.countDocuments();
-    const totalPage = Math.ceil(total / limit);
-
-    let result = await perfumeModel
-        .find()
-        .select('perfumeName uri targetAudience brand')
-        .skip((page - 1) * limit)
-        .limit(limit)
-        .populate('brand', 'brandName')
-        .lean();
-
-    if (!page && !limit) {
-        return result
-    }
-
-    return {
-        data: result,
-        pagination: {
-            total: total,
-            page: page,
-            limit: limit,
-            totalPage: totalPage
-        }
-    };
-}
-
 const findPerfumeService = async (data) => {
+    console.log(data);
+
     if (!data) {
         throw new BadRequestException(`${data} is required`);
     }
 
     let result = await perfumeModel
-        .findOne({ _id: data.id })
+        .findOne({ _id: data })
         .populate('brand')
         .lean();
     if (!result) {
@@ -128,11 +103,8 @@ const findPerfumeByBrandNameService = async (data) => {
     return result;
 }
 
-
-
 module.exports = {
     createPerfumeService,
-    findAllPerfumesService,
     findPerfumeService,
     findPerfumeByNameService,
     findPerfumeByBrandNameService
