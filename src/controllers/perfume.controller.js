@@ -28,8 +28,8 @@ const createPerfume = async (req, res, next) => {
 
 const findPerfume = async (req, res, next) => {
     try {
-        const data = req.params;
-        const result = await findPerfumeService(data);
+        const { id } = req.params;
+        const result = await findPerfumeService(id);
         return successResponse(res, result, "Find perfume successful!!", 200);
     } catch (error) {
         next(error);
@@ -40,6 +40,8 @@ const findPerfumeByName = async (req, res, next) => {
     try {
         const { name, brandId, current, pageSize } = req.query;
         const result = await findPerfumeByNameService(name, brandId, current, pageSize);
+        console.log(result);
+
         return successResponse(res, result, "Find perfume by name successful!!", 200);
     } catch (error) {
         next(error);

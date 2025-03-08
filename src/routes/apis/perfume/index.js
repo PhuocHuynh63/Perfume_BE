@@ -12,7 +12,7 @@ const {
 const router = express.Router();
 
 router.post(`/perfume/create`, createPerfume);
-router.get(`/perfume/:id`, findPerfume);
+router.get(`/perfume/id/:id`, findPerfume);
 router.get(`/perfume/search`, findPerfumeByName);
 router.get(`/perfume/brand/:id`, findPerfumeByBrandName);
 router.post(`/perfume/update/:id`, updatePerfume);

@@ -21,13 +21,13 @@ const createPerfumeService = async (token, data) => {
     }
 }
 
-const findPerfumeService = async (data) => {
-    if (!data) {
-        throw new BadRequestException(`${data} is required`);
+const findPerfumeService = async (id) => {
+    if (!id) {
+        throw new BadRequestException(`${id} is required`);
     }
 
     let result = await perfumeModel
-        .findOne({ _id: data })
+        .findOne({ _id: id })
         .populate('brand')
         .lean();
     if (!result) {
@@ -36,7 +36,7 @@ const findPerfumeService = async (data) => {
     return result;
 }
 
-const findPerfumeByNameService = async (name, brandId = "", current = 1, pageSize = 10) => {
+const findPerfumeByNameService = async (name = "", brandId = "", current = 1, pageSize = 10) => {
     const regex = new RegExp(name, 'i');
 
     let filter = { perfumeName: regex };
@@ -60,8 +60,8 @@ const findPerfumeByNameService = async (name, brandId = "", current = 1, pageSiz
     return {
         data: result,
         pagination: {
-            current: current,
-            pageSize: pageSize,
+            current: Number(current),
+            pageSize: Number(pageSize),
             totalPage: totalPage,
             totalItem: totalItem
         }
