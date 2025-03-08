@@ -7,7 +7,8 @@ const {
     findPerfumeByNameService,
     findPerfumeByBrandNameService,
     deletePerfumeService,
-    updatePerfumeService
+    updatePerfumeService,
+    addCommentIntoPerfumeService
 } = require("../services/perfume.service");
 
 /**
@@ -17,9 +18,7 @@ const {
 const createPerfume = async (req, res, next) => {
     try {
         const data = req.body;
-        const token = req.cookies.accessToken;
-
-        const result = await createPerfumeService(token, data);
+        const result = await createPerfumeService(data);
         return successResponse(res, result, "Create perfume successful!!", 201);
     } catch (error) {
         next(error);
@@ -61,10 +60,20 @@ const findPerfumeByBrandName = async (req, res, next) => {
 const updatePerfume = async (req, res, next) => {
     try {
         const data = req.body;
-        const token = req.cookies.accessToken;
         const { id } = req.params;
-        const result = await updatePerfumeService(id, token, data);
+        const result = await updatePerfumeService(id, data);
         return successResponse(res, result, "Update perfume successful!!", 200);
+    } catch (error) {
+        next(error);
+    }
+}
+
+const addCommentIntoPerfume = async (req, res, next) => {
+    try {
+        const data = req.body;
+        const { id } = req.params;
+        const result = await addCommentIntoPerfumeService(id, data);
+        return successResponse(res, result, "Add comment into perfume successful!!", 200);
     } catch (error) {
         next(error);
     }
@@ -73,13 +82,10 @@ const updatePerfume = async (req, res, next) => {
 const deletePerfume = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { name, brandId, limit, page } = req.query;
-        const token = req.cookies.accessToken;
-        const result = await deletePerfumeService(token, id);
+        const result = await deletePerfumeService(id);
         return successResponse(res, result, "Delete perfume successful!!", 200);
     } catch (error) {
         next(error);
-        return res.render(`manage`, { error: error.message, success: null });
     }
 }
 
@@ -89,5 +95,6 @@ module.exports = {
     findPerfumeByName,
     findPerfumeByBrandName,
     updatePerfume,
-    deletePerfume
+    addCommentIntoPerfume,
+    deletePerfume,
 }

@@ -2,6 +2,7 @@
 
 const { ConflictException } = require('../exceptions');
 const brandModel = require('../models/brand.model');
+const perfumeModel = require('../models/perfume.model');
 
 /**
  * Service
@@ -59,6 +60,16 @@ const updateBrandService = async (id, brandName) => {
 }
 
 const deleteBrandService = async (id) => {
+    const perfumeCount = await perfumeModel.countDocuments({ brand: id });
+    const brand = await brandModel.findById(id).lean();
+    if (!brand) {
+        throw new ConflictException(`Brand ${id} is not exist!`);
+    }
+
+    if (perfumeCount > 0) {
+        throw new ConflictException(`Brand ${brand.brandName} is already used in ${perfumeCount} perfumes!`);
+    }
+
     let result = await brandModel.deleteOne({ _id: id });
     return {
         data: result

@@ -7,12 +7,8 @@ const jwt = require('jsonwebtoken');
  * Service
  */
 
-const createPerfumeService = async (token, data) => {
+const createPerfumeService = async (data) => {
     try {
-        const decoded = jwt.decode(token);
-        if (decoded.isAdmin === false) {
-            throw new BadRequestException(`You are not allowed to create perfume`);
-        }
         let result = await perfumeModel.create(data);
         return result;
     } catch (error) {
@@ -29,6 +25,7 @@ const findPerfumeService = async (id) => {
     let result = await perfumeModel
         .findOne({ _id: id })
         .populate('brand')
+        .populate('comments.author', 'name')
         .lean();
     if (!result) {
         throw new NotFoundException(`Perfume not found`);
@@ -106,12 +103,8 @@ const findPerfumeByBrandNameService = async (data) => {
     return result;
 }
 
-const updatePerfumeService = async (id, token, data) => {
+const updatePerfumeService = async (id, data) => {
     try {
-        const decoded = jwt.decode(token);
-        if (decoded.isAdmin === false) {
-            throw new BadRequestException(`You are not allowed to update perfume`);
-        }
         let result = await perfumeModel.updateOne({ _id: id }, data);
         return result;
     } catch (error) {
@@ -120,18 +113,28 @@ const updatePerfumeService = async (id, token, data) => {
     }
 }
 
-const deletePerfumeService = async (token, data) => {
-    try {
-        const decoded = jwt.decode(token);
-        if (decoded.isAdmin === false) {
-            throw new BadRequestException(`You are not allowed to delete perfume`);
-        }
-        let result = await perfumeModel.deleteOne({ _id: data });
-        return result;
-    } catch (error) {
-        console.log(error);
-        return null
+const addCommentIntoPerfumeService = async (id, data) => {
+    const perfume = await findPerfumeService(id);
+    const existingComment = perfume.comments.some(comment => {
+        return comment.author._id.toString() === data.author
+    });
+
+    if (existingComment) {
+        throw new BadRequestException(`You have already commented on this perfume`);
     }
+
+    const result = await perfumeModel.updateOne({ _id: id }, { $push: { comments: data } });
+    return result;
+}
+
+const deletePerfumeService = async (id) => {
+    const perfume = await findPerfumeService(id);
+    if (perfume.comments.length > 0) {
+        throw new BadRequestException(`You can't delete this perfume because it has comments`);
+    }
+
+    let result = await perfumeModel.deleteOne({ _id: id });
+    return result;
 }
 
 module.exports = {
@@ -140,5 +143,6 @@ module.exports = {
     findPerfumeByNameService,
     findPerfumeByBrandNameService,
     updatePerfumeService,
-    deletePerfumeService
+    addCommentIntoPerfumeService,
+    deletePerfumeService,
 }

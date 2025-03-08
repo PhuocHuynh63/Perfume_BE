@@ -53,8 +53,8 @@ const getAllMember = async (req, res, next) => {
 
 const getMemberById = async (req, res, next) => {
     try {
-        const { _id } = req.params;
-        const result = await getMemberByIdService(_id);
+        const { id } = req.params;
+        const result = await getMemberByIdService(id);
         return successResponse(res, result, "Get user by id successful!!", 200);
     } catch (error) {
         next(error);

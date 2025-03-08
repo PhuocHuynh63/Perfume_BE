@@ -78,8 +78,8 @@ const getAllMemberService = async (page, limit) => {
     };
 }
 
-const getMemberByIdService = async (_id) => {
-    let member = await memberModel.findById(_id).select("-password").lean();
+const getMemberByIdService = async (id) => {
+    let member = await memberModel.findOne({ _id: id }).select("-password").lean();
     if (!member) {
         throw new NotFoundException("Member not found");
     }
@@ -89,10 +89,11 @@ const getMemberByIdService = async (_id) => {
 const updateMemberService = async (_id, data) => {
     const { name, YOB, gender } = data;
     let member = await memberModel.findByIdAndUpdate(_id, { name, YOB, gender }, { new: true });
+
     if (!member) {
         throw new NotFoundException("Member not found");
     }
-    return await member.save();
+    return member.save();
 }
 
 const changePasswordService = async (id, data) => {

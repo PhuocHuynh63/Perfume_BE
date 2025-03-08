@@ -7,10 +7,10 @@ const COLLECTION_NAME = 'Perfumes';
 
 
 const commentSchema = new mongoose.Schema({
-    rating: { type: Number,min: 1,max: 3,require: true },
-    content: { type: String,require: true },
-    author: { type: mongoose.Schema.Types.ObjectId,ref: "Members",require: true }
-},{
+    rating: { type: Number, min: 1, max: 3, require: true },
+    content: { type: String, require: true },
+    author: { type: mongoose.Schema.Types.ObjectId, ref: "Member", require: true }
+}, {
     timestamps: true,
     collection: 'Comments'
 }
@@ -27,12 +27,12 @@ const perfumeSchema = new mongoose.Schema({
     targetAudience: { type: String, required: true }, // male, femail, unisex
     comments: [commentSchema],
     brand: { type: mongoose.Schema.Types.ObjectId, ref: "Brand", required: true },
-},{
+}, {
     timestamps: true,
     collection: COLLECTION_NAME
 }
 );
 
 //Export the model
-module.exports = mongoose.model(DOCUMENT_NAME,perfumeSchema);
+module.exports = mongoose.model(DOCUMENT_NAME, perfumeSchema);
 

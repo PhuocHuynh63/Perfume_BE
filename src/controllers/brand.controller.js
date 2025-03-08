@@ -49,7 +49,7 @@ const createBrand = async (req, res) => {
 
 }
 
-const deleteBrand = async (req, res) => {
+const deleteBrand = async (req, res, next) => {
     try {
         const { id } = req.params;
         const data = await deleteBrandService(id);
